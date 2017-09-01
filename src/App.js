@@ -8,16 +8,16 @@ class App extends Component {
 constructor() {
     super();
     this.state = {
-        speed: 10
+        task: 1
     };
 }
 
 componentDidMount() {
     const rootRef = firebase.database().ref();
-    const speedRef = rootRef.child('speed');
-    speedRef.on('value', snap => {
+    const taskRef = rootRef.child('task');
+    taskRef.on('value', snap => {
       this.setState({
-          speed: snap.val()
+          task: snap.val()
       });
     });
 }
@@ -25,7 +25,7 @@ componentDidMount() {
   render() {
     return (
       <div className="App">
-          <h1>{this.state.speed}</h1>
+          <h1>{this.state.task}</h1>
       </div>
     );
   }
