@@ -1,61 +1,42 @@
 import React, { Component } from 'react';
-//import logo from './logo.svg';
 import './App.css';
 import * as firebase from 'firebase';
 
-// TODO: make this.state.tasks an array
-var TodoList = React.createClass({
-  render: function() {
-    var createItem = function(task, index) {
-      debugger
-      return <li key={ index }>{task.task}</li>;
-    };
-    return <ul>{ this.props.tasks.map(createItem) }</ul>;
-  }
-});
-
 class App extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            messages: []
+        };
+    }
 
-constructor() {
-    super();
-    this.state = {
-        // task: 1,
-        tasks: []
-    };
+    componentWillMount() {
+        let messagesRef = firebase.database().ref('messages').orderByKey().limitToLast(100);
+        messagesRef.on('child_added', snapshot => {
+            let message = { text: snapshot.val(), id: snapshot.key };
+            this.setState({ messages: [message].concat(this.state.messages) });
+        })
+    }
 
-    /*
-      tasks = [{
-        task: "Go to store",
-        completed: false,
-        expired: false,
-        createdAt: Firebase.ServerValue.TIMESTAMP
-      }, {}, {}]
+    addMessage(e) {
+        e.preventDefault();
+        firebase.database().ref('messages').push( this.inputEl.value );
+        this.inputEl.value = '';
+    }
 
-    */
+    render() {
+      return (
+        <form onSubmit={this.addMessage.bind(this)}>
+            <input type="text" ref={ el => this.inputEl = el }/>
+            <input type="submit"/>
+            <ul>
+              {
+                  this.state.messages.map( message => <li key={message.id}>{message.text}</li> )
+              }
+            </ul>
+         </form>
+      );
+    }
 }
-
-componentDidMount() {
-    const rootRef = firebase.database().ref();
-    const taskRef = rootRef.child('task');
-    rootRef.on('value', snap => {
-      this.setState({
-          tasks: [snap.val()]
-      });
-      console.log(this.state);
-
-    });
-}
-
-  render() {
-    return (
-      <div className="App">
-        <TodoList tasks = {this.state.tasks} />
-          // <h1>{this.state.task}</h1>
-      </div>
-    );
-  }
-}
-
-
 
 export default App;
