@@ -6,32 +6,35 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            messages: []
+            tasks: []
         };
     }
 
     componentWillMount() {
-        let messagesRef = firebase.database().ref('messages').orderByKey().limitToLast(100);
-        messagesRef.on('child_added', snapshot => {
-            let message = { text: snapshot.val(), id: snapshot.key };
-            this.setState({ messages: [message].concat(this.state.messages) });
+        let tasksRef = firebase.database().ref('tasks').orderByKey().limitToLast(100);
+        tasksRef.on('child_added', snapshot => {
+            let task = {
+              text: snapshot.val(),
+              id: snapshot.key,
+            };
+            this.setState({ tasks: [task].concat(this.state.tasks) });
         })
     }
 
-    addMessage(e) {
+    addTask(e) {
         e.preventDefault();
-        firebase.database().ref('messages').push( this.inputEl.value );
+        firebase.database().ref('tasks').push( this.inputEl.value );
         this.inputEl.value = '';
     }
 
     render() {
       return (
-        <form onSubmit={this.addMessage.bind(this)}>
+        <form onSubmit={this.addTask.bind(this)}>
             <input type="text" ref={ el => this.inputEl = el }/>
             <input type="submit"/>
             <ul>
               {
-                  this.state.messages.map( message => <li key={message.id}>{message.text}</li> )
+                  this.state.tasks.map( task => <li key={task.id}>{task.text}</li> )
               }
             </ul>
          </form>
