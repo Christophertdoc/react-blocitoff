@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import * as firebase from 'firebase';
-		
+
 class App extends Component {
   constructor(props) {
       super(props);
@@ -16,9 +16,10 @@ class App extends Component {
           // 2 minutes in milliseconds: 120000
           let task = snapshot.val();
           if(Date.now() - task.createdAt >= 120000){
-            firebase.database().ref('tasks').child(snapshot.key).update({
-              expired: true
-            });
+            firebase.database().ref('tasks').child(snapshot.key).remove(
+              //expired: true
+              //taskRef.child(snapshot.key).remove();
+            );
           }
           task.expiredString = String(task.expired);
           task.id = snapshot.key;
