@@ -16,10 +16,10 @@ class App extends Component {
           // 2 minutes in milliseconds: 120000
           let task = snapshot.val();
           if(Date.now() - task.createdAt >= 120000){
-            firebase.database().ref('tasks').child(snapshot.key).remove(
-              //expired: true
+            firebase.database().ref('tasks').child(snapshot.key).update({
+            expired: true
               //taskRef.child(snapshot.key).remove();
-            );
+            });
           }
           task.expiredString = String(task.expired);
           task.id = snapshot.key;
@@ -38,13 +38,31 @@ class App extends Component {
       this.inputEl.value = '';
   }
   render() {
+
     return (
       <form onSubmit={this.addTask.bind(this)}>
           <input type="text" ref={ el => this.inputEl = el }/>
           <input type="submit"/>
           <ul>
             {
-                this.state.tasks.map( task => <li key={task.id}>{task.text}, {task.createdAt}, expired: {task.expiredString}</li> )
+              // this.state.tasks.map(function(task){
+              //   if(task.expired){
+              //     return <li key={task.id}>{task.text}, {task.createdAt}, is expired</li>
+              //   }
+              //   else {
+              //     return <li key={task.id}>{task.text}, {task.createdAt}, is NOT expired</li>
+              //   }
+              // })
+
+              // the original:
+              this.state.tasks.filter( task => !task.expired ).map( task => <li key={task.id}>{task.text}, {task.createdAt}, expired: {task.expiredString}</li> )
+            }
+          </ul>
+
+          <h1>Expired tasks!</h1>
+          <ul>
+            {
+              this.state.tasks.filter( task => task.expired ).map( task => <li key={task.id}>{task.text}, {task.createdAt}, expired: {task.expiredString}</li> )
             }
           </ul>
        </form>
