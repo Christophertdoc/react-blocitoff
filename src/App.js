@@ -32,17 +32,22 @@ class App extends Component {
         text: this.inputEl.value,
         createdAt: Date.now(),
         completed: false,
-        expired: false
+        expired: false,
+        priorityLevel: this.inputPriority.value,
       }
       firebase.database().ref('tasks').push( todo );
       this.inputEl.value = '';
+      this.inputPriority.value = '';
   }
   render() {
 
     return (
       <form onSubmit={this.addTask.bind(this)}>
           <input type="text" ref={ el => this.inputEl = el }/>
+          <input type="text" ref={ el => this.inputPriority = el }/>
           <input type="submit"/>
+
+          <h2>Active Tasks</h2>
           <ul>
             {
               // this.state.tasks.map(function(task){
@@ -55,14 +60,15 @@ class App extends Component {
               // })
 
               // the original:
-              this.state.tasks.filter( task => !task.expired ).map( task => <li key={task.id}>{task.text}, {task.createdAt}, expired: {task.expiredString}</li> )
+
+              this.state.tasks.filter( task => !task.expired ).map( task => <li key={task.id}>{task.text}, {task.createdAt}, priority: {task.priorityLevel}, expired: {task.expiredString}</li> )
             }
           </ul>
 
-          <h1>Expired tasks!</h1>
+          <h3>Expired Tasks</h3>
           <ul>
             {
-              this.state.tasks.filter( task => task.expired ).map( task => <li key={task.id}>{task.text}, {task.createdAt}, expired: {task.expiredString}</li> )
+              this.state.tasks.filter( task => task.expired ).map( task => <li key={task.id}>{task.text}, {task.createdAt}, priority: {task.priorityLevel}, expired: {task.expiredString}</li> )
             }
           </ul>
        </form>
