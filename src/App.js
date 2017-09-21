@@ -12,15 +12,22 @@ class App extends Component {
   componentWillMount() {
       let tasksRef = firebase.database().ref('tasks').orderByKey().limitToLast(100);
       tasksRef.on('child_added', snapshot => {
-          // check if task is older than 2 minutes
-          // 2 minutes in milliseconds: 120000
+          firebase.database().ref('tasks').child(snapshot.key).update({
+              completed: false,
+
+
+          });
           let task = snapshot.val();
           if(Date.now() - task.createdAt >= 120000){
             firebase.database().ref('tasks').child(snapshot.key).update({
-            expired: true
+                expired: true,
+
               //taskRef.child(snapshot.key).remove();
             });
           }
+          task.completedString = String(task.completed);
+
+
           task.expiredString = String(task.expired);
           task.id = snapshot.key;
           this.setState({ tasks: [task].concat(this.state.tasks) });
@@ -43,7 +50,9 @@ class App extends Component {
 
     return (
       <form onSubmit={this.addTask.bind(this)}>
+          <h4>Enter Task</h4>
           <input type="text" ref={ el => this.inputEl = el }/>
+          <h4>Enter Priority Level (low, med, high)</h4>
           <input type="text" ref={ el => this.inputPriority = el }/>
           <input type="submit"/>
 
@@ -61,14 +70,14 @@ class App extends Component {
 
               // the original:
 
-              this.state.tasks.filter( task => !task.expired ).map( task => <li key={task.id}>{task.text}, {task.createdAt}, priority: {task.priorityLevel}, expired: {task.expiredString}</li> )
+              this.state.tasks.filter( task => !task.expired ).map( task => <li key={task.id}>{task.text}, {task.createdAt}, priority: {task.priorityLevel}, expired: {task.expiredString}, completed: {task.completedString}</li> )
             }
           </ul>
 
           <h3>Expired Tasks</h3>
           <ul>
             {
-              this.state.tasks.filter( task => task.expired ).map( task => <li key={task.id}>{task.text}, {task.createdAt}, priority: {task.priorityLevel}, expired: {task.expiredString}</li> )
+              this.state.tasks.filter( task => task.expired ).map( task => <li key={task.id}>{task.text}, {task.createdAt}, priority: {task.priorityLevel}, expired: {task.expiredString}, completed: {task.completedString}</li> )
             }
           </ul>
        </form>
