@@ -55,8 +55,6 @@ class App extends Component {
     }
   }
   completeTask(task){
-    // mark a task's completed field as true
-    // then push to firebase
     firebase.database().ref('tasks').child(task.id).update({
         completed: true
     });
