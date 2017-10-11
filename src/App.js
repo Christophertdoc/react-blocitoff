@@ -63,6 +63,13 @@ class App extends Component {
     task.completed = true;
 
     this.updateTasks();
+
+    this.firebase.on('child_changed', snapshot => {
+        task = snapshot.val();
+        // task.completed = true;
+        console.log("Changed!");
+        // this.updateTasks();
+    });
   }
   render() {
 
