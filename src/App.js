@@ -66,7 +66,7 @@ class App extends Component {
 
     this.firebase.on('child_changed', snapshot => {
         task = snapshot.val();
-        // task.completed = true;
+        //task.completed = true;
         console.log("Changed!");
         // this.updateTasks();
     });
@@ -88,7 +88,7 @@ class App extends Component {
           <h2>Active Tasks</h2>
           <ul>
             {
-              this.state.tasks.filter( task => !task.expired && !task.completed ).map( task => <li key={task.id}>{task.text}, {task.createdAt}, priority: {task.priorityLevel}, expired: {task.expiredString}, completed: {task.completedString} <a href="#" onClick={() => this.completeTask(task)}>[Complete Task]</a></li> )
+              this.state.tasks.filter( task => !task.expired && !task.completed ).map( task => <li key={task.id}>{task.text}, {task.createdAt}, priority: {task.priorityLevel}, expired: {task.expiredString}, completed: {task.completedString} <a href="http://localhost:3000/" onClick={() => this.completeTask(task)}>[Complete Task]</a></li> )
             }
           </ul>
 
